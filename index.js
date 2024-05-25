@@ -22,20 +22,18 @@ app.get("/tasks", async (req, res) => {
 
 app.get("/tasks/:id", async (req, res) => {
     try {
-        
-        const taskId = req.params.id
-        const task = await TaskModel.findById(taskId)
+        const taskId = req.params.id;
+        const task = await TaskModel.findById(taskId);
 
-        if(!task) {
-            return res.status(404).send('Essa tarefa não foi encontrada')
+        if (!task) {
+            return res.status(404).send("Essa tarefa não foi encontrada");
         }
 
-        return res.status(200).send(task)
-
+        return res.status(200).send(task);
     } catch (error) {
-        res.status(500).send(error.mensage)
+        res.status(500).send(error.mensage);
     }
-})
+});
 
 app.post("/tasks", async (req, res) => {
     try {
@@ -53,15 +51,33 @@ app.delete("/tasks/:id", async (req, res) => {
     try {
         const taskId = req.params.id;
 
-        const taskToDelete = await TaskModel.findById(taskId)
+        const taskToDelete = await TaskModel.findById(taskId);
 
         if (!taskToDelete) {
-            return res.status(404).send('Essa tarefa não foi encontrada')
+            return res.status(404).send("Essa tarefa não foi encontrada");
         }
 
         const deletedTask = await TaskModel.findByIdAndDelete(taskId);
 
         res.status(200).send(deletedTask);
+    } catch (error) {
+        res.status(500).send(error.mensage);
+    }
+});
+
+app.patch("/tasks/:id", async (req, res) => {
+    try {
+        const taskId = req.params.id;
+
+        const taskData = req.body;
+
+        const updatedTask = await TaskModel.findByIdAndUpdate(
+            taskId,
+            taskData,
+            { new: true }
+        );
+
+        return res.status(200).send(updatedTask);
     } catch (error) {
         res.status(500).send(error.mensage);
     }
