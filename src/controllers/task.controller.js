@@ -1,5 +1,5 @@
 const TaskModel = require("../models/task.model");
-const {notFoundError} = require('../errors/mongodb.errors')
+const {notFoundError, objectIdCastError} = require('../errors/mongodb.errors')
 
 class TaskController {
     constructor(req, res) {
@@ -27,7 +27,11 @@ class TaskController {
 
             return  this.res.status(200).send(task);
         } catch (error) {
-            this.res.status(500).send(error.mensage);
+            if(error instanceof mongoose.Error.CastError ) {
+                return objectIdCastError(this.res)
+            }
+
+            this.res.status(500).send(error.message);
         }
     }
 
@@ -75,6 +79,9 @@ class TaskController {
 
             return  this.res.status(200).send(updatedTask);
         } catch (error) {
+            if(error instanceof mongoose.Error.CastError ) {
+                return objectIdCastError(this.res)
+            }
             this.res.status(500).send(error.mensage);
         }
     }
